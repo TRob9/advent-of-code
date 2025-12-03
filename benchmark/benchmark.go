@@ -161,11 +161,17 @@ func UpdateReadme(readmePath string, year int, results []Result) error {
 		}
 		part1 := dayResults[day][1]
 		part2 := dayResults[day][2]
+
+		// Add gold stars for completed parts
 		if part1 == "" {
 			part1 = "-"
+		} else {
+			part1 = "⭐ " + part1
 		}
 		if part2 == "" {
 			part2 = "-"
+		} else {
+			part2 = "⭐ " + part2
 		}
 		table.WriteString(fmt.Sprintf("| %d   | %s | %s |\n", day, part1, part2))
 	}
