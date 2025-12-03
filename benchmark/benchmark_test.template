@@ -1,0 +1,18 @@
+package main
+
+import (
+	"os"
+	"testing"
+)
+
+var anchor int
+
+func BenchmarkSolution(b *testing.B) {
+	input, _ := os.ReadFile("input.txt")
+	var result int
+	for i := 0; i < b.N; i++ {
+		solve(input)
+		result = Answer
+	}
+	anchor = result
+}

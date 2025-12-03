@@ -1,0 +1,31 @@
+# Session cookie for Advent of Code auto-submission
+.session
+
+# Archive directory (old solutions)
+archive/
+
+# Server state
+server/state.json
+
+# Problem files (auto-fetched)
+problem.html
+
+# Benchmark test files (generated on-demand)
+benchmark_test.go
+
+# IDE
+.idea/
+.vscode/
+
+# Build artifacts
+*.exe
+*.test
+*.out
+
+# Node modules
+node_modules/
+package.json
+package-lock.json
+
+# Claude Code state files
+.claude_grep_state
