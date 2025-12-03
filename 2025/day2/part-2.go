@@ -1,3 +1,5 @@
+//go:build part2
+
 package main
 
 import (
@@ -21,20 +23,34 @@ func convertProductCodes (input string){
 		start, _:= strconv.Atoi(pair[0])
 		end, _:= strconv.Atoi(pair[1])
 		for i := start; i <= end; i++ {
-				compare(i)
+			compare(i)
 		}
 	}
 
 }
 
 func compare(productCode int) {
-	halfLength := len(strconv.Itoa(productCode)) / 2
-	modifier := 1
-	for i := 0; i < halfLength; i++ {
-		modifier *= 10
+	limit := len(strconv.Itoa(productCode)) / 2
+	runes := []rune(strconv.Itoa(productCode))
+	for i := limit; i >= 1; i-- {
+		if len(strconv.Itoa(productCode))%i == 0 {
+			newRunes := []rune{}
+			for j:=0;j < i; j++ {
+				newRunes = append(newRunes, runes[j])
+			}
+			s := string(newRunes)
+			if concatenate(s, len(strconv.Itoa(productCode))/i) == strconv.Itoa(productCode) {
+				Answer += productCode
+				break
+			}
+		}
 	}
-	lastHalf := productCode % modifier
-	if strconv.Itoa(productCode) == strconv.Itoa(lastHalf)+strconv.Itoa(lastHalf) {
-		Answer += productCode
+}
+
+func concatenate(partial string, times int) string {
+	result := ""
+	for i := 0; i < times; i++ {
+		result += partial
 	}
+	return result
 }
