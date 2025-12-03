@@ -12,12 +12,12 @@ fetch:
 fetch-%:
 	@./scripts/fetch.sh $*
 
-# Run targets
+# Run targets (skip tests, just run solution)
 run-d%p1:
-	@cd $(YEAR)/day$* && go run -tags=part1 part1.go
+	@cd $(YEAR)/day$* && SKIP_TESTS=1 SKIP_SUBMIT=1 go run -tags=part1 part1.go
 
 run-d%p2:
-	@cd $(YEAR)/day$* && go run -tags=part2 part2.go
+	@cd $(YEAR)/day$* && SKIP_TESTS=1 SKIP_SUBMIT=1 go run -tags=part2 part2.go
 
 # Test targets (runs tests + auto-submits if they pass)
 test-d%p1:

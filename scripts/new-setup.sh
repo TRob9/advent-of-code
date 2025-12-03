@@ -46,6 +46,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -65,12 +66,14 @@ func main() {
 
 	h := harness.New(solve, &Answer, 1, opts...)
 
-	// Run tests first
-	if passed, err := h.RunTests(); err != nil {
-		fmt.Printf("Test error: %v\n", err)
-		return
-	} else if !passed {
-		return
+	// Run tests first (unless SKIP_TESTS is set)
+	if os.Getenv("SKIP_TESTS") == "" {
+		if passed, err := h.RunTests(); err != nil {
+			fmt.Printf("Test error: %v\n", err)
+			return
+		} else if !passed {
+			return
+		}
 	}
 
 	// Run actual solution
@@ -153,6 +156,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -172,12 +176,14 @@ func main() {
 
 	h := harness.New(solve, &Answer, 2, opts...)
 
-	// Run tests first
-	if passed, err := h.RunTests(); err != nil {
-		fmt.Printf("Test error: %v\n", err)
-		return
-	} else if !passed {
-		return
+	// Run tests first (unless SKIP_TESTS is set)
+	if os.Getenv("SKIP_TESTS") == "" {
+		if passed, err := h.RunTests(); err != nil {
+			fmt.Printf("Test error: %v\n", err)
+			return
+		} else if !passed {
+			return
+		}
 	}
 
 	// Run actual solution

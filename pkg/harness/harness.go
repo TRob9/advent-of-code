@@ -166,8 +166,8 @@ func (h *Harness) Run() error {
 
 	fmt.Printf("Part %d answer: %v\n", h.part, result)
 
-	// Auto-submit if enabled
-	if h.autoSubmit {
+	// Auto-submit if enabled (unless SKIP_SUBMIT is set)
+	if h.autoSubmit && os.Getenv("SKIP_SUBMIT") == "" {
 		return h.submitAnswer(result)
 	}
 

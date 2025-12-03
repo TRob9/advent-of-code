@@ -175,9 +175,10 @@ cd benchmark/cmd && go run main.go
 
 | Day | Part 1 | Part 2 |
 |-----|--------|--------|
-| 1   | 194.83 µs/op | 177.12 µs/op |
-| 2   | 98.71 ms/op | 616.54 ms/op |
-| 3   | 53.18 µs/op | 67.73 µs/op |
+| 1   | 187.12 µs/op | 171.11 µs/op |
+| 2   | 101.64 ms/op | 602.38 ms/op |
+| 3   | 52.70 µs/op | 66.46 µs/op |
+
 
 
 
