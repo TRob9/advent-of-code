@@ -8,7 +8,9 @@ My solutions for Advent of Code challenges.
 2. Run `make new` to create fresh boilerplate (archives my solutions)
 3. Add your session cookie to `.session` file (see [Auto-Submission Setup](#auto-submission-setup))
 4. Start the auto-fetch server: `./start_server.command`
-5. Start solving: `make test-d1p1`
+5. Write your solution in the `solve()` function
+6. Run it: `make run-d1p1` (just runs your code)
+7. Test it: `make test-d1p1` (runs tests, auto-submits if they pass)
 
 ## Note
 
@@ -64,23 +66,23 @@ Note: Manual fetch commands require the server to be running for Claude-powered 
 ## Solving Workflow
 
 1. **Wait for auto-fetch** (or run `make fetch-<day>`)
-2. **Implement solution** in `part1.go` or `part2.go`
-3. **Test and submit:**
-   ```bash
-   make test-d1p1   # Runs tests, then auto-submits if they pass
-   ```
+2. **Implement your solution** in the `solve()` function (`part1.go` or `part2.go`)
+3. **Iterate with `make run`** to see your answer without running tests
+4. **Submit with `make test`** when ready - runs tests, auto-submits if they pass
 
 ### Testing vs Running
 
 ```bash
-# Run tests + auto-submit (if tests pass)
-make test-d1p1
-
-# Just run the solution (skip tests, skip submission)
+# Just run your solution (no tests, no submission)
 make run-d1p1
+
+# Test + auto-submit (runs tests, submits if they pass)
+make test-d1p1
 ```
 
-Use `make run` when iterating on your solution. Use `make test` when ready to submit.
+Use `make run` when developing. Use `make test` when ready to submit.
+
+**Note:** Auto-submission is controlled by the `autoSubmit` constant in each solution file (default: `true`).
 
 ### How Testing Works
 
