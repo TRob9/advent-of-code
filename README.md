@@ -6,8 +6,9 @@ My solutions for Advent of Code challenges.
 
 1. Clone the repository
 2. Run `make new` to create fresh boilerplate (archives my solutions)
-3. Add your session cookie to `.session` file
-4. Start solving: `make test-d1p1`
+3. Add your session cookie to `.session` file (see [Auto-Submission Setup](#auto-submission-setup))
+4. Start the auto-fetch server: `./start_server.command`
+5. Start solving: `make test-d1p1`
 
 ## Note
 
@@ -31,44 +32,62 @@ Each day follows a consistent pattern:
 
 Note: `benchmark_test.go` is generated on-demand when running benchmarks, not stored in the repo.
 
-## Solving a New Puzzle
+## Auto-Fetch Server
 
-### Option 1: Manual (Fastest)
+The auto-fetch server handles everything automatically:
 
-1. Navigate to the day's directory (e.g., `cd 2025/day4`)
-2. Paste example + expected output into `testcases.txt`:
-   ```
-   *** Part 1 ***
-   input:
-   <paste example input from problem>
-   expected:
-   <expected answer from problem>
-   ```
-3. Paste your puzzle input into `input.txt`
-4. Implement the `solve()` function in `part1.go`
-5. Test and auto-submit: `make test-d4p1`
-
-### Option 2: Auto-Fetch with Claude
-
+**Start the server:**
 ```bash
-make fetch-4  # Fetches problem, input, and populates testcases.txt
+# Double-click on macOS
+./start_server.command
+
+# Or run manually
+cd server && node server.js
 ```
 
-This will:
-- 📥 Download problem description and input
-- 🤖 Use Claude to extract test cases automatically
-- 📝 Populate `testcases.txt` in the correct format
+The server will:
+- ⏰ Auto-fetch at 4:00:05 PM AEDT when puzzles unlock
+- 📥 Download problem description → `dayN/problem.md`
+- 📥 Download your personal input → `dayN/input.txt`
+- 🤖 Use Claude SDK to extract and populate test cases → `testcases.txt`
+- 🔄 Auto-fetch Part 2 when you complete Part 1
+- 💤 Run continuously in the background
 
-Then just:
-1. Implement the `solve()` function in `part1.go`
-2. Test and auto-submit: `make test-d4p1`
+**Manual fetch (server must be running):**
+```bash
+make fetch        # Fetch today's puzzle
+make fetch-<day>  # Fetch specific day (e.g., make fetch-4)
+```
+
+Note: Manual fetch commands require the server to be running for Claude-powered test case extraction.
+
+## Solving Workflow
+
+1. **Wait for auto-fetch** (or run `make fetch-<day>`)
+2. **Implement solution** in `part1.go` or `part2.go`
+3. **Test and submit:**
+   ```bash
+   make test-d1p1   # Runs tests, then auto-submits if they pass
+   ```
+
+### Testing vs Running
+
+```bash
+# Run tests + auto-submit (if tests pass)
+make test-d1p1
+
+# Just run the solution (skip tests, skip submission)
+make run-d1p1
+```
+
+Use `make run` when iterating on your solution. Use `make test` when ready to submit.
 
 ### How Testing Works
 
-The harness will:
-- ✅ Run your solution against the test case
-- ✅ If test passes, run against real input
-- ✅ Auto-submit answer (if session cookie is set)
+The test harness will:
+1. ✅ Run your solution against test cases from `testcases.txt`
+2. ✅ If tests pass, run against your real input from `input.txt`
+3. ✅ Auto-submit the answer to Advent of Code
 
 ## Auto-Submission Setup
 
@@ -84,31 +103,6 @@ To enable auto-submission:
 
 The `.session` file is git-ignored for security.
 
-Now `make test-dXpY` will auto-submit if tests pass!
-
-## Auto-Fetch Server (Optional)
-
-Want problems and inputs automatically downloaded at unlock time (4:00 PM EST)?
-
-**Start the server:**
-```bash
-# Double-click on macOS
-./start_server.command
-
-# Or run manually
-cd server && node server.js
-```
-
-The server will:
-- ⏰ Wait until 4:00:05 PM each day
-- 📥 Auto-fetch problem description → `dayN/problem.md`
-- 📥 Auto-fetch your personal input → `dayN/input.txt`
-- 🤖 Use Claude SDK to populate `testcases.txt` automatically
-- 🔄 Auto-fetch Part 2 when Part 1 completes successfully
-- 💤 Run continuously in the background
-
-Perfect for getting started as soon as puzzles unlock! You can also use `make fetch` or `make fetch-<day>` to manually fetch any day.
-
 ## Starting Fresh (make new)
 
 The `make new` command archives existing solutions and creates fresh boilerplate:
@@ -121,7 +115,7 @@ This will:
 1. Archive current solutions to `archive/2025_TIMESTAMP.tar.gz`
 2. Delete the `2025/` directory
 3. Create fresh boilerplate for all 12 days
-4. Create `.session` file if it doesn't exist
+4. Create `.session.example` file if `.session` doesn't exist
 
 Perfect for:
 - Starting a new year
@@ -130,27 +124,7 @@ Perfect for:
 
 Your old solutions are safely archived!
 
-## Running Solutions
-
-Using the Makefile:
-
-```bash
-# Run solutions
-make run-d1p1   # Day 1, Part 1
-make run-d1p2   # Day 1, Part 2
-make run-d12p2  # Day 12, Part 2
-```
-
-Or run directly with Go:
-
-```bash
-cd 2025/day1 && go run -tags=part1 part1.go
-cd 2025/day1 && go run -tags=part2 part2.go
-```
-
 ## Benchmarks
-
-Using the Makefile:
 
 ```bash
 # Benchmark individual solutions
@@ -161,14 +135,11 @@ make bench-d3p2   # Day 3, Part 2
 make bench-all
 ```
 
-Or run directly with Go:
+Or run directly:
 
 ```bash
 cd 2025/day1 && go test -tags=part1 -bench=BenchmarkPart1 -benchmem
-cd 2025/day1 && go test -tags=part2 -bench=BenchmarkPart2 -benchmem
-
-# Run all and update README
-cd benchmark/cmd && go run main.go
+cd benchmark/cmd && go run main.go  # Run all and update README
 ```
 
 ### 2025 Results (Apple M4 Pro)
@@ -178,6 +149,7 @@ cd benchmark/cmd && go run main.go
 | 1   | 187.12 µs/op | 171.11 µs/op |
 | 2   | 101.64 ms/op | 602.38 ms/op |
 | 3   | 52.70 µs/op | 66.46 µs/op |
+
 
 
 
