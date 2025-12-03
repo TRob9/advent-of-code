@@ -28,13 +28,10 @@ func main() {
 	if os.Getenv("SKIP_TESTS") == "" {
 		if passed, err := h.RunTests(); err != nil {
 			fmt.Printf("Test error: %v\n", err)
-				return
-		}
-	}
+			return
 		} else if !passed {
-				return
+			return
 		}
-	}
 	}
 
 	// Run actual solution
