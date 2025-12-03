@@ -26,7 +26,7 @@ Each day follows a consistent pattern:
 
 ```
 2025/
-└── day1/
+└── day01/
     ├── part1.go      # Part 1 solution
     ├── part2.go      # Part 2 solution
     ├── input.txt     # Your puzzle input
@@ -142,7 +142,7 @@ make bench-all
 Or run directly:
 
 ```bash
-cd 2025/day1 && go test -tags=part1 -bench=BenchmarkPart1 -benchmem
+cd 2025/day01 && go test -tags=part1 -bench=BenchmarkPart1 -benchmem
 cd benchmark/cmd && go run main.go  # Run all and update README
 ```
 

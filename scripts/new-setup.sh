@@ -35,7 +35,7 @@ mkdir -p "$YEAR"
 
 # Create 12 days of boilerplate
 for day in {1..12}; do
-    DAY_DIR="$YEAR/day$day"
+    DAY_DIR="$YEAR/day$(printf "%02d" $day)"
     mkdir -p "$DAY_DIR"
 
     # Create part1.go
@@ -282,7 +282,7 @@ expected:
 EOF
 
 
-    echo "Success: Created day$day"
+    echo "Success: Created day$(printf "%02d" $day)"
 done
 
 echo ""

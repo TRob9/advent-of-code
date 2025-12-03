@@ -15,7 +15,7 @@ if [ "$DAY" -lt 1 ] || [ "$DAY" -gt 25 ]; then
     exit 1
 fi
 
-DAY_DIR="${YEAR}/day${DAY}"
+DAY_DIR="${YEAR}/day$(printf "%02d" $DAY)"
 
 # Check if day directory exists
 if [ ! -d "$DAY_DIR" ]; then

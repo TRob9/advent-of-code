@@ -285,7 +285,7 @@ async function fetchURL(url) {
 }
 
 function saveProblem(day, content) {
-  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day}`);
+  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day.toString().padStart(2, '0')}`);
 
   try {
     // Extract article content from HTML
@@ -327,7 +327,7 @@ function saveProblem(day, content) {
 }
 
 function saveInput(day, content) {
-  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day}`);
+  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day.toString().padStart(2, '0')}`);
   const inputPath = path.join(dayDir, 'input.txt');
 
   try {
@@ -339,7 +339,7 @@ function saveInput(day, content) {
 }
 
 async function populateTests(day, part) {
-  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day}`);
+  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day.toString().padStart(2, '0')}`);
   const problemPath = path.join(dayDir, 'problem.md');
 
   // Read the markdown file
@@ -474,7 +474,7 @@ Note: Part 2 often uses the same example input as Part 1, but with a different e
 }
 
 async function populateTestsWithPrompt(day, customPrompt) {
-  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day}`);
+  const dayDir = path.join(REPO_ROOT, `${YEAR}`, `day${day.toString().padStart(2, '0')}`);
 
   console.log(`AI: Using Claude with custom prompt...`);
   console.log(`AI: Working directory: ${dayDir}`);

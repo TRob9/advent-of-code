@@ -37,7 +37,7 @@ func RunAll(year int, maxDay int) ([]Result, error) {
 
 // runBenchmark runs a single benchmark and parses the result
 func runBenchmark(year, day, part int) (Result, error) {
-	dayDir := fmt.Sprintf("%d/day%d", year, day)
+	dayDir := fmt.Sprintf("%d/day%02d", year, day)
 
 	// Skip if solution is still using placeholder
 	if isPlaceholder(year, day, part) {
@@ -108,7 +108,7 @@ func isPlaceholder(year, day, part int) bool {
 		repoRoot = strings.TrimSuffix(currentDir, "/benchmark/cmd")
 	}
 
-	fileName := fmt.Sprintf("%s/%d/day%d/part%d.go", repoRoot, year, day, part)
+	fileName := fmt.Sprintf("%s/%d/day%02d/part%d.go", repoRoot, year, day, part)
 	content, err := os.ReadFile(fileName)
 	if err != nil {
 		return true // If we can't read the file, skip it
