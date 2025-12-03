@@ -119,9 +119,8 @@ make new
 
 This will:
 1. Archive current solutions to `archive/2025_TIMESTAMP.tar.gz`
-2. Delete the `2025/` directory
-3. Create fresh boilerplate for all 12 days
-4. Create `.session.example` file if `.session` doesn't exist
+2. Delete and recreate the `2025/` directory with fresh boilerplate for all 12 days
+3. Create `.session.example` file if `.session` doesn't exist
 
 Perfect for:
 - Starting a new year
