@@ -12,6 +12,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -151,6 +152,15 @@ func (h *Harness) Run() error {
 		return fmt.Errorf("failed to read input.txt: %v", err)
 	}
 
+	// Reset answer to zero value before running actual solution
+	// (tests may have modified it)
+	switch v := h.answer.(type) {
+	case *int:
+		*v = 0
+	case *string:
+		*v = ""
+	}
+
 	h.solveFn(input)
 
 	// Get the answer from the pointer
@@ -242,9 +252,20 @@ func (h *Harness) submitAnswer(answer interface{}) error {
 	if strings.Contains(bodyStr, "That's the right answer") {
 		fmt.Println("🎉 Correct! Answer submitted successfully!")
 
-		// Notify server to fetch Part 2
+		// For Part 1: copy part1.go to part2.go and notify server to fetch Part 2
 		if h.part == 1 {
-			go notifyServerForPart2(h.day)
+			// Copy part1.go to part2.go
+			if err := h.copyPart1ToPart2(); err != nil {
+				fmt.Printf("⚠️  Failed to copy part1.go to part2.go: %v\n", err)
+			}
+
+			var wg sync.WaitGroup
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				notifyServerForPart2(h.day)
+			}()
+			wg.Wait()
 		}
 
 		return nil
@@ -303,4 +324,31 @@ func notifyServerForPart2(day int) {
 	} else {
 		fmt.Printf("⚠️  Server responded with status %d\n", resp.StatusCode)
 	}
+}
+
+// copyPart1ToPart2 copies the part1.go file to part2.go, updating tags and part numbers
+func (h *Harness) copyPart1ToPart2() error {
+	// Read part1.go
+	part1Content, err := os.ReadFile("part1.go")
+	if err != nil {
+		return fmt.Errorf("failed to read part1.go: %v", err)
+	}
+
+	// Convert to string and update tags/references
+	content := string(part1Content)
+	content = strings.ReplaceAll(content, "//go:build part1", "//go:build part2")
+
+	// Update harness.New() call to use part 2
+	// This handles both formats: harness.New(solve, &Answer, 1, opts...)
+	// Need to use regexp to replace the number after the third parameter
+	re := regexp.MustCompile(`(harness\.New\([^,]+,\s*[^,]+,\s*)1(\s*,)`)
+	content = re.ReplaceAllString(content, "${1}2${2}")
+
+	// Write to part2.go
+	if err := os.WriteFile("part2.go", []byte(content), 0644); err != nil {
+		return fmt.Errorf("failed to write part2.go: %v", err)
+	}
+
+	fmt.Println("📝 Copied part1.go to part2.go")
+	return nil
 }
