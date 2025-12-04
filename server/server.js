@@ -7,7 +7,11 @@
  * - Re-fetches Part 2 when Part 1 completes
  */
 
+import { setMaxListeners } from 'events';
 import { query } from '@anthropic-ai/claude-agent-sdk';
+
+// Fix EventEmitter memory leak warning
+setMaxListeners(50);
 import http from 'http';
 import https from 'https';
 import { HttpsProxyAgent } from 'https-proxy-agent';
@@ -21,8 +25,8 @@ const __dirname = path.dirname(__filename);
 
 const YEAR = 2025;
 const UNLOCK_HOUR = 16; // 4:00 PM
-const UNLOCK_MINUTE = 0;
-const UNLOCK_SECOND = 5;
+const UNLOCK_MINUTE = 55;
+const UNLOCK_SECOND = 50;
 const CHECK_INTERVAL = 1000; // 1 second
 const HTTP_PORT = 3030; // Port for harness to trigger Part 2 fetch
 
@@ -162,6 +166,7 @@ server.listen(HTTP_PORT, () => {
 });
 
 let lastCheckedDay = 0;
+let isProcessing = false; // Prevent concurrent processDay calls
 
 // Main loop
 setInterval(async () => {
@@ -169,11 +174,16 @@ setInterval(async () => {
   const currentDay = getCurrentDay(now);
 
   // Check if it's unlock time
-  if (isUnlockTime(now) && currentDay > 0 && currentDay !== lastCheckedDay) {
+  if (isUnlockTime(now) && currentDay > 0 && currentDay !== lastCheckedDay && !isProcessing) {
     if (!hasFetched(state, YEAR, currentDay, 1)) {
-      console.log(`\nAlert: Unlock time reached! Processing Day ${currentDay}...`);
-      await processDay(currentDay, 1);
+      isProcessing = true; // Set flag immediately to prevent concurrent calls
       lastCheckedDay = currentDay;
+      console.log(`\nAlert: Unlock time reached! Processing Day ${currentDay}...`);
+      try {
+        await processDay(currentDay, 1);
+      } finally {
+        isProcessing = false;
+      }
     }
   }
 
@@ -216,11 +226,16 @@ function isUnlockTime(now) {
 }
 
 async function processDay(day, part) {
+  const startTime = Date.now();
   console.log(`\nFetching Day ${day} Part ${part}...`);
 
   try {
     // Fetch problem description
+    const fetchStart = Date.now();
     const problemHTML = await fetchProblem(day);
+    const fetchEnd = Date.now();
+    console.log(`Timing: Fetch took ${fetchEnd - fetchStart}ms`);
+
     if (problemHTML) {
       saveProblem(day, problemHTML);
     }
@@ -232,12 +247,17 @@ async function processDay(day, part) {
     }
 
     // Use Claude to populate tests.txt (reads problem.md)
+    const claudeStart = Date.now();
+    console.log(`Timing: Starting Claude at ${claudeStart - startTime}ms since unlock`);
     await populateTests(day, part);
+    const claudeEnd = Date.now();
+    console.log(`Timing: Claude took ${claudeEnd - claudeStart}ms`);
 
     // Mark as fetched in state
     markFetched(state, YEAR, day, part);
 
     console.log(`Success: Day ${day} Part ${part} complete!`);
+    console.log(`Timing: Total ${Date.now() - startTime}ms`);
   } catch (err) {
     console.error(`Error: Error processing day ${day}:`, err.message);
   }
@@ -451,18 +471,85 @@ Note: Part 2 often uses the same example input as Part 1, but with a different e
         cwd: dayDir,
         systemPrompt: {
           type: 'preset',
-          name: 'default'
+          preset: 'claude_code'
+        },
+        includePartialMessages: true,
+        canUseTool: async (toolName, input, options) => {
+          console.log(`[AUTO-APPROVE] ${toolName}`);
+          return { behavior: 'allow', updatedInput: input };
         }
       }
     });
 
-    // Stream Claude's response
+    let currentThinkingText = '';
+    let currentToolName = null;
+    let currentToolInput = '';
+
+    // Stream Claude's response with full visibility
     for await (const message of result) {
       if (message.type === 'stream_event') {
-        const event = message.streamEvent;
+        const event = message.event;
 
-        if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
-          process.stdout.write(event.delta.text);
+        // CONTENT BLOCK START - Tool use or text begins
+        if (event.type === 'content_block_start' && event.content_block) {
+          if (currentThinkingText.trim()) {
+            console.log(currentThinkingText);
+            currentThinkingText = '';
+          }
+
+          if (event.content_block.type === 'tool_use') {
+            currentToolName = event.content_block.name;
+            currentToolInput = '';
+            console.log(`\nTool: Using ${currentToolName}...`);
+          } else if (event.content_block.type === 'text') {
+            currentThinkingText = '';
+          }
+        }
+
+        // CONTENT BLOCK DELTA - Streaming text or tool input
+        if (event.type === 'content_block_delta' && event.delta) {
+          if (event.delta.type === 'text_delta') {
+            const text = event.delta.text;
+            currentThinkingText += text;
+            process.stdout.write(text);
+          }
+
+          if (event.delta.type === 'input_json_delta') {
+            currentToolInput += event.delta.partial_json;
+          }
+        }
+
+        // CONTENT BLOCK STOP - Tool or text complete
+        if (event.type === 'content_block_stop') {
+          if (currentThinkingText.trim()) {
+            console.log('');
+            currentThinkingText = '';
+          }
+
+          if (currentToolName && currentToolInput) {
+            try {
+              const parsedInput = JSON.parse(currentToolInput);
+              console.log(`Tool input:`, JSON.stringify(parsedInput, null, 2).substring(0, 200));
+            } catch (e) {
+              console.log(`Tool input:`, currentToolInput.substring(0, 200));
+            }
+            currentToolName = null;
+            currentToolInput = '';
+          }
+        }
+      }
+
+      // USER MESSAGE - Contains tool results
+      if (message.type === 'user' && message.content) {
+        if (Array.isArray(message.content)) {
+          for (const block of message.content) {
+            if (block.type === 'tool_result') {
+              const resultText = typeof block.content === 'string'
+                ? block.content
+                : JSON.stringify(block.content);
+              console.log(`Tool result:`, resultText.substring(0, 300));
+            }
+          }
         }
       }
     }

@@ -3,9 +3,8 @@
 package main
 
 import (
-	"os"
 	"fmt"
-	"strconv"
+	"os"
 	"strings"
 
 	"github.com/trob9/advent-of-code/pkg/harness"
@@ -14,7 +13,7 @@ import (
 // AUTO-SUBMIT: When set to true, running the relevant make test command will auto submit answer if testcases pass (ie. make test-d1p1)
 const autoSubmit = true
 
-var Answer int // Change to string if needed
+var Answer int = 0 // Change to string if needed
 
 func main() {
 	var opts []harness.Option
@@ -39,66 +38,141 @@ func main() {
 }
 
 func solve(input []byte) {
-	// Parse input - uncomment the pattern you need, delete the rest
+	lines := strings.Split(strings.TrimSpace(string(input)), "\n")
+	cleanedInput := make([][]rune, len(lines))
+	for i, line := range lines {
+		cleanedInput[i] = []rune(line)
+	}
 
-	// a) Array of strings (lines)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n")
+	rows := len(cleanedInput)
+	cols := len(cleanedInput[0])
 
-	// b) Array of strings (comma-separated)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), ",")
+	// Check corners
+	if cleanedInput[0][0] == 64 {
+		Answer++
+	}
+	if cleanedInput[0][cols-1] == 64 {
+		Answer++
+	}
+	if cleanedInput[rows-1][0] == 64 {
+		Answer++
+	}
+	if cleanedInput[rows-1][cols-1] == 64 {
+		Answer++
+	}
 
-	// c) Array of integers (lines)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([]int, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i], _ = strconv.Atoi(line)
-	// }
+	// Inner grid excluding outermost rows and columns
+	for i := 1; i < rows-1; i++ { // excluding outermost left and right columns
+		for j := 1; j < cols-1; j++ { // excluding outermost top and bottom rows
+			count := 0
+			if cleanedInput[i][j] == 64 {
+				if cleanedInput[i][j-1] == 64 { // left side check
+					count++
+				}
+				if cleanedInput[i][j+1] == 64 { // right side check
+					count++
+				}
+				for e := -1; e <= 1; e++ {
+					if cleanedInput[i-1][j+e] == 64 { // upper row check
+						count++
+					}
+					if cleanedInput[i+1][j+e] == 64 { // lower row check
+						count++
+					}
+				}
+				if count < 4 {
+					Answer++
+				}
+				count = 0
+			}
+		}
+	}
 
-	// d) Array of integers (comma-separated)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make([]int, len(parts))
-	// for i, part := range parts {
-	// 	cleanedInput[i], _ = strconv.Atoi(strings.TrimSpace(part))
-	// }
+	// Top row excluding corners
+	for j := 1; j < cols-1; j++ {
+		if cleanedInput[0][j] == 64 {
+			count := 0
+			if cleanedInput[0][j-1] == 64 { // left side check
+				count++
+			}
+			if cleanedInput[0][j+1] == 64 { // right side check
+				count++
+			}
+			for e := -1; e <= 1; e++ {
+				if cleanedInput[1][j+e] == 64 { // lower row check
+					count++
+				}
+			}
+			if count < 4 {
+				Answer++
+			}
+			count = 0
+		}
+	}
 
-	// e) Map of string to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[string]int)
-	// for _, part := range parts {
-	// 	cleanedInput[strings.TrimSpace(part)] = 0
-	// }
+	// Bottom row excluding corners
+	for j := 1; j < cols-1; j++ {
+		if cleanedInput[rows-1][j] == 64 {
+			count := 0
+			if cleanedInput[rows-1][j-1] == 64 { // left side check
+				count++
+			}
+			if cleanedInput[rows-1][j+1] == 64 { // right side check
+				count++
+			}
+			for e := -1; e <= 1; e++ {
+				if cleanedInput[rows-2][j+e] == 64 { // upper row check
+					count++
+				}
+			}
+			if count < 4 {
+				Answer++
+			}
+			count = 0
+		}
+	}
 
-	// f) Map of int to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[int]int)
-	// for _, part := range parts {
-	// 	key, _ := strconv.Atoi(strings.TrimSpace(part))
-	// 	cleanedInput[key] = 0
-	// }
+	// Leftmost column excluding corners
+	for i := 1; i < rows-1; i++ {
+		if cleanedInput[i][0] == 64 {
+			count := 0
+			if cleanedInput[i-1][0] == 64 { // above check
+				count++
+			}
+			if cleanedInput[i+1][0] == 64 { // below check
+				count++
+			}
+			for e := -1; e <= 1; e++ {
+				if cleanedInput[i+e][1] == 64 { // right side check
+					count++
+				}
+			}
+			if count < 4 {
+				Answer++
+			}
+			count = 0
+		}
+	}
 
-	// g) 2D grid of characters
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]rune, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i] = []rune(line)
-	// }
-
-	// h) 2D grid of integers (space-separated)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]int, len(lines))
-	// for i, line := range lines {
-	// 	parts := strings.Fields(line)
-	// 	cleanedInput[i] = make([]int, len(parts))
-	// 	for j, part := range parts {
-	// 		cleanedInput[i][j], _ = strconv.Atoi(part)
-	// 	}
-	// }
-
-	// i) Single integer
-	// cleanedInput, _ := strconv.Atoi(strings.TrimSpace(string(input)))
-
-	// j) Single string
-	// cleanedInput := strings.TrimSpace(string(input))
-
-	Answer = 0 // Placeholder - replace with your solution logic
+	// Rightmost column excluding corners
+	for i := 1; i < rows-1; i++ {
+		if cleanedInput[i][cols-1] == 64 {
+			count := 0
+			if cleanedInput[i-1][cols-1] == 64 { // above check
+				count++
+			}
+			if cleanedInput[i+1][cols-1] == 64 { // below check
+				count++
+			}
+			for e := -1; e <= 1; e++ {
+				if cleanedInput[i+e][cols-2] == 64 { // left side check
+					count++
+				}
+			}
+			if count < 4 {
+				Answer++
+			}
+			count = 0
+		}
+	}
 }
