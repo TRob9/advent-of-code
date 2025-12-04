@@ -25,8 +25,8 @@ const __dirname = path.dirname(__filename);
 
 const YEAR = 2025;
 const UNLOCK_HOUR = 16; // 4:00 PM
-const UNLOCK_MINUTE = 55;
-const UNLOCK_SECOND = 50;
+const UNLOCK_MINUTE = 0;
+const UNLOCK_SECOND = 5;
 const CHECK_INTERVAL = 1000; // 1 second
 const HTTP_PORT = 3030; // Port for harness to trigger Part 2 fetch
 
