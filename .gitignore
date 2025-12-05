@@ -1,3 +1,6 @@
+# Environment configuration (user-specific)
+.env
+
 # Session cookie for Advent of Code auto-submission
 .session
 
@@ -29,3 +32,12 @@ package-lock.json
 
 # Claude Code state files
 .claude_grep_state
+
+# Watch script
+watch_files.sh
+
+# Server daemon files
+server/server.pid
+server/server.log
+server/launchd.log
+server/launchd.error.log

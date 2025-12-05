@@ -4,13 +4,17 @@ My solutions for Advent of Code challenges.
 
 ## Quick Start (For Others Using This Repo)
 
+**⚠️ First Time Setup:** See [SETUP.md](SETUP.md) for detailed installation and configuration instructions.
+
+**Quick version:**
 1. Clone the repository
-2. Run `make new` to create fresh boilerplate (archives my solutions)
-3. Add your session cookie to `.session` file (see [Auto-Submission Setup](#auto-submission-setup))
-4. Start the auto-fetch server: `./start_server.command`
-5. Write your solution in the `solve()` function
-6. Run it: `make run-dXpY` (just runs your code)
-7. Test it: `make test-dXpY` (runs tests, auto-submits if they pass)
+2. Copy and configure environment: `cp .env.example .env` (update paths)
+3. Run `make new` to create fresh boilerplate (archives my solutions)
+4. Add your session cookie to `.session` file (see [Auto-Submission Setup](#auto-submission-setup))
+5. Start the auto-fetch server: `./start_server_daemon.command`
+6. Write your solution in the `solve()` function
+7. Run it: `make run-dXpY` (just runs your code)
+8. Test it: `make test-dXpY` (runs tests, auto-submits if they pass)
 
 Where X is the day number and Y is the part (1 or 2). Example: `make test-d1p1`
 
@@ -38,15 +42,27 @@ Note: `benchmark_test.go` is generated on-demand when running benchmarks, not st
 
 ## Auto-Fetch Server
 
-The auto-fetch server handles everything automatically:
+The auto-fetch server handles everything automatically.
+
+**First time setup:** See [SETUP.md](SETUP.md) for configuration instructions.
 
 **Start the server:**
 ```bash
-# Double-click on macOS
+# Daemon mode (runs in background, auto-restarts)
+./start_server_daemon.command
+
+# Foreground mode (legacy)
 ./start_server.command
 
 # Or run manually
 cd server && node server.js
+```
+
+**Server management:**
+```bash
+./server_status.command    # Check if running
+./stop_server.command       # Stop daemon
+./server_logs.command       # View logs
 ```
 
 The server will:
