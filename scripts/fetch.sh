@@ -185,7 +185,7 @@ Execute this task now by reading problem.md and editing testcases.txt with the E
 fi
 
 # Call Claude SDK via the server's populate endpoint
-if ! curl -s -X POST http://localhost:3030/populate \
+if ! curl -s -X POST http://localhost:23030/populate \
     -H "Content-Type: application/json" \
     -d "{\"day\": $DAY, \"part\": $([ "$PARTS_COUNT" = "1" ] && echo 1 || echo 2), \"prompt\": $(echo "$PROMPT" | jq -Rs .)}" \
     > /dev/null 2>&1; then

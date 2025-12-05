@@ -28,7 +28,7 @@ const UNLOCK_HOUR = 16; // 4:00 PM
 const UNLOCK_MINUTE = 0;
 const UNLOCK_SECOND = 5;
 const CHECK_INTERVAL = 1000; // 1 second
-const HTTP_PORT = 3030; // Port for harness to trigger Part 2 fetch
+const HTTP_PORT = 23030; // Port for harness to trigger Part 2 fetch (high port to avoid conflicts)
 
 const REPO_ROOT = path.join(__dirname, '..');
 const STATE_FILE = path.join(__dirname, 'state.json');
@@ -168,17 +168,40 @@ server.listen(HTTP_PORT, () => {
 let lastCheckedDay = 0;
 let isProcessing = false; // Prevent concurrent processDay calls
 
+// Check for missed fetch on current day (if past unlock time)
+async function checkMissedFetch() {
+  const now = new Date();
+  const currentDay = getCurrentDay(now);
+
+  if (currentDay > 0 && isPastUnlockTime(now)) {
+    if (!hasFetched(state, YEAR, currentDay, 1) && !isProcessing) {
+      isProcessing = true;
+      console.log(`\nAlert: Current day ${currentDay} not fetched yet - fetching now...`);
+      try {
+        await processDay(currentDay, 1);
+      } finally {
+        isProcessing = false;
+      }
+    }
+  }
+}
+
+// Check on startup for missed fetch
+checkMissedFetch();
+
 // Main loop
 setInterval(async () => {
   const now = new Date();
   const currentDay = getCurrentDay(now);
 
-  // Check if it's unlock time
-  if (isUnlockTime(now) && currentDay > 0 && currentDay !== lastCheckedDay && !isProcessing) {
-    if (!hasFetched(state, YEAR, currentDay, 1)) {
+  // Check if it's unlock time OR if we're past unlock time and haven't fetched today
+  if (currentDay > 0 && currentDay !== lastCheckedDay && !isProcessing) {
+    const shouldFetch = (isUnlockTime(now) || isPastUnlockTime(now)) && !hasFetched(state, YEAR, currentDay, 1);
+
+    if (shouldFetch) {
       isProcessing = true; // Set flag immediately to prevent concurrent calls
       lastCheckedDay = currentDay;
-      console.log(`\nAlert: Unlock time reached! Processing Day ${currentDay}...`);
+      console.log(`\nAlert: Processing Day ${currentDay}...`);
       try {
         await processDay(currentDay, 1);
       } finally {
@@ -223,6 +246,12 @@ function isUnlockTime(now) {
   return now.getHours() === UNLOCK_HOUR &&
          now.getMinutes() === UNLOCK_MINUTE &&
          now.getSeconds() >= UNLOCK_SECOND;
+}
+
+function isPastUnlockTime(now) {
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const unlockMinutes = UNLOCK_HOUR * 60 + UNLOCK_MINUTE;
+  return currentMinutes > unlockMinutes;
 }
 
 async function processDay(day, part) {

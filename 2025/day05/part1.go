@@ -3,12 +3,11 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"github.com/trob9/advent-of-code/pkg/harness"
+	"os"
 	"strconv"
 	"strings"
-
-	"github.com/trob9/advent-of-code/pkg/harness"
 )
 
 // AUTO-SUBMIT: When set to true, running the relevant make test command will auto submit answer if testcases pass (ie. make test-d1p1)
@@ -39,66 +38,32 @@ func main() {
 }
 
 func solve(input []byte) {
-	// Parse input - uncomment the pattern you need, delete the rest
-
-	// a) Array of strings (lines)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n")
-
-	// b) Array of strings (comma-separated)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), ",")
-
-	// c) Array of integers (lines)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([]int, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i], _ = strconv.Atoi(line)
-	// }
-
-	// d) Array of integers (comma-separated)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make([]int, len(parts))
-	// for i, part := range parts {
-	// 	cleanedInput[i], _ = strconv.Atoi(strings.TrimSpace(part))
-	// }
-
-	// e) Map of string to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[string]int)
-	// for _, part := range parts {
-	// 	cleanedInput[strings.TrimSpace(part)] = 0
-	// }
-
-	// f) Map of int to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[int]int)
-	// for _, part := range parts {
-	// 	key, _ := strconv.Atoi(strings.TrimSpace(part))
-	// 	cleanedInput[key] = 0
-	// }
-
-	// g) 2D grid of characters
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]rune, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i] = []rune(line)
-	// }
-
-	// h) 2D grid of integers (space-separated)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]int, len(lines))
-	// for i, line := range lines {
-	// 	parts := strings.Fields(line)
-	// 	cleanedInput[i] = make([]int, len(parts))
-	// 	for j, part := range parts {
-	// 		cleanedInput[i][j], _ = strconv.Atoi(part)
-	// 	}
-	// }
-
-	// i) Single integer
-	// cleanedInput, _ := strconv.Atoi(strings.TrimSpace(string(input)))
-
-	// j) Single string
-	// cleanedInput := strings.TrimSpace(string(input))
-
-	Answer = 0 // Placeholder - replace with your solution logic
+	cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n\n")
+	ranges := strings.Split(strings.TrimSpace(string(cleanedInput[0])), "\n")
+	ingredientsRaw := strings.Split(strings.TrimSpace((cleanedInput[1])), "\n")
+	ingredients := make([]int, len(ingredientsRaw))
+	for i, line := range ingredientsRaw {
+		ingredients[i], _ = strconv.Atoi(line)
+	}
+	rangeMap := make(map[int]int)
+	for _, p := range ranges {
+		pair := strings.Split(p, "-")
+		start, _ := strconv.Atoi(pair[0])
+		end, _ := strconv.Atoi(pair[1])
+		if rangeMap[start] < end {
+			rangeMap[start] = end
+		}
+	}
+	for _, ingredient := range ingredients {
+		Count := 0
+		for i, value := range rangeMap {
+			if ingredient >= i && ingredient <= value {
+				Count++
+			}
+		}
+		if Count > 0 {
+			Answer++
+			Count = 0
+		}
+	}
 }

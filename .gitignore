@@ -41,3 +41,6 @@ server/server.pid
 server/server.log
 server/launchd.log
 server/launchd.error.log
+
+# Security instructions (keep private)
+CLAUDE.md

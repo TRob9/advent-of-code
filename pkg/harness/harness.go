@@ -295,7 +295,7 @@ func notifyServerForPart2(day int) {
 	// Brief delay for AoC to fully unlock Part 2
 	time.Sleep(500 * time.Millisecond)
 
-	url := "http://localhost:3030/fetchPart2"
+	url := "http://localhost:23030/fetchPart2"
 	payload := map[string]int{"day": day}
 	jsonData, err := json.Marshal(payload)
 	if err != nil {

@@ -11,7 +11,7 @@ import (
 
 func main() {
 	year := flag.Int("year", 2025, "Year to run benchmarks for")
-	maxDay := flag.Int("days", 25, "Maximum day to benchmark")
+	maxDay := flag.Int("days", 13, "Maximum day to benchmark")
 	updateReadme := flag.Bool("update-readme", true, "Update README with results")
 	flag.Parse()
 

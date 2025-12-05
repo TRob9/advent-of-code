@@ -166,10 +166,16 @@ cd benchmark/cmd && go run main.go  # Run all and update README
 
 | Day | Part 1 | Part 2 |
 |-----|--------|--------|
-| 1   | ⭐ 174.74 µs/op | ⭐ 163.73 µs/op |
-| 2   | ⭐ 95.83 ms/op | ⭐ 567.65 ms/op |
-| 3   | ⭐ 47.08 µs/op | ⭐ 63.91 µs/op |
-| 4   | ⭐ 60.19 µs/op | ⭐ 715.36 µs/op |
+| 1   | ⭐ 175.28 µs/op | ⭐ 175.14 µs/op |
+| 2   | ⭐ 99.46 ms/op | ⭐ 604.75 ms/op |
+| 3   | ⭐ 53.32 µs/op | ⭐ 66.25 µs/op |
+| 4   | ⭐ 69.66 µs/op | ⭐ 800.97 µs/op |
+| 5   | ⭐ 1.16 ms/op | ⭐ 27.79 µs/op |
+
+
+
+
+
 
 
 
