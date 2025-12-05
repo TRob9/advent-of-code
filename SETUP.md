@@ -59,7 +59,7 @@ cd ..
 Start the server manually first to ensure everything works:
 
 ```bash
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 ```
 
 You should see:
@@ -96,7 +96,7 @@ mkdir -p ~/Library/LaunchAgents
 
     <key>ProgramArguments</key>
     <array>
-        <string>/full/path/to/advent-of-code/start_server_daemon.command</string>
+        <string>/full/path/to/advent-of-code/launchers/start_server_daemon.command</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -128,18 +128,18 @@ launchctl load ~/Library/LaunchAgents/com.yourusername.advent-of-code-server.pli
 
 ```bash
 # Start server
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 
 # Stop server
-./stop_server.command
+./launchers/stop_server.command
 
 # Check status
-./server_status.command
+./launchers/server_status.command
 
 # View logs
-./server_logs.command           # Last 50 lines
-./server_logs.command -f         # Follow in real-time
-./server_logs.command 100        # Last 100 lines
+./launchers/server_logs.command           # Last 50 lines
+./launchers/server_logs.command -f         # Follow in real-time
+./launchers/server_logs.command 100        # Last 100 lines
 ```
 
 ### launchd Control (if using auto-start)
@@ -194,7 +194,7 @@ These are already in `.gitignore`.
 
 3. Check logs for errors:
    ```bash
-   ./server_logs.command
+   ./launchers/server_logs.command
    ```
 
 ### Session cookie expired
@@ -206,8 +206,8 @@ If you get authentication errors:
 3. Update `.session` file
 4. Restart server:
    ```bash
-   ./stop_server.command
-   ./start_server_daemon.command
+   ./launchers/stop_server.command
+   ./launchers/start_server_daemon.command
    ```
 
 ### launchd not starting server
@@ -260,7 +260,7 @@ When sharing this project or contributing:
 ## Support
 
 For issues or questions:
-1. Check logs: `./server_logs.command`
+1. Check logs: `./launchers/server_logs.command`
 2. Try manual start to see detailed errors
 3. Verify Node.js version: `node --version`
 4. Ensure `.session` file exists and is valid

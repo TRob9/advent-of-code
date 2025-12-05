@@ -11,7 +11,7 @@ My solutions for Advent of Code challenges.
 2. Copy and configure environment: `cp .env.example .env` (update paths)
 3. Run `make new` to create fresh boilerplate (archives my solutions)
 4. Add your session cookie to `.session` file (see [Auto-Submission Setup](#auto-submission-setup))
-5. Start the auto-fetch server: `./start_server_daemon.command`
+5. Start the auto-fetch server: `./launchers/start_server_daemon.command`
 6. Write your solution in the `solve()` function
 7. Run it: `make run-dXpY` (just runs your code)
 8. Test it: `make test-dXpY` (runs tests, auto-submits if they pass)
@@ -49,7 +49,7 @@ The auto-fetch server handles everything automatically.
 **Start the server:**
 ```bash
 # Daemon mode (runs in background, auto-restarts)
-./start_server_daemon.command
+./launchers/start_server_daemon.command
 
 # Foreground mode (legacy)
 ./start_server.command
@@ -60,9 +60,9 @@ cd server && node server.js
 
 **Server management:**
 ```bash
-./server_status.command    # Check if running
-./stop_server.command       # Stop daemon
-./server_logs.command       # View logs
+./launchers/server_status.command    # Check if running
+./launchers/stop_server.command       # Stop daemon
+./launchers/server_logs.command       # View logs
 ```
 
 The server will:
