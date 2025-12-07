@@ -3,9 +3,8 @@
 package main
 
 import (
-	"os"
 	"fmt"
-	"strconv"
+	"os"
 	"strings"
 
 	"github.com/trob9/advent-of-code/pkg/harness"
@@ -39,66 +38,49 @@ func main() {
 }
 
 func solve(input []byte) {
-	// Parse input - uncomment the pattern you need, delete the rest
 
-	// a) Array of strings (lines)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n")
+	lines := strings.Split(strings.TrimSpace(string(input)), "\n")
+	lines[1] = lines[0]
 
-	// b) Array of strings (comma-separated)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), ",")
+	cleanedInput := make([][]rune, len(lines))
+	for i, line := range lines {
+		cleanedInput[i] = []rune(line)
+	}
+	// create a matching intGrid because converting runes to ints and back is a bad time
+	intGrid := make([][]int, len(cleanedInput))
+	for i := range intGrid {
+		intGrid[i] = make([]int, len(lines))
+	}
 
-	// c) Array of integers (lines)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([]int, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i], _ = strconv.Atoi(line)
-	// }
+	for r, row := range cleanedInput {
+		for c, char := range row {
+			if char == 'S' {
+				intGrid[r][c] = 1 // add the position of S to the intGrid as 1
+			}
+		}
+	}
 
-	// d) Array of integers (comma-separated)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make([]int, len(parts))
-	// for i, part := range parts {
-	// 	cleanedInput[i], _ = strconv.Atoi(strings.TrimSpace(part))
-	// }
+	for r := range cleanedInput {
+		if r == 0 { /// skip that first row type shit
+			continue
+		}
+		for c, char := range cleanedInput[r] {
+			if char == '^' {
+				if intGrid[r-1][c] >= 1 { // if the number above the split icon is more than zero
+					intGrid[r][c-1]++ // split to the side, adding one to each
+					intGrid[r][c+1]++
+				}
+			}
+			if intGrid[r][c] == 0 && intGrid[r-1][c] >= 1 { // if above number is more than zero
+				intGrid[r][c] = intGrid[r-1][c] // the below number becomes the above number, propagating down
+			}
+		}
+	}
 
-	// e) Map of string to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[string]int)
-	// for _, part := range parts {
-	// 	cleanedInput[strings.TrimSpace(part)] = 0
-	// }
-
-	// f) Map of int to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[int]int)
-	// for _, part := range parts {
-	// 	key, _ := strconv.Atoi(strings.TrimSpace(part))
-	// 	cleanedInput[key] = 0
-	// }
-
-	// g) 2D grid of characters
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]rune, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i] = []rune(line)
-	// }
-
-	// h) 2D grid of integers (space-separated)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]int, len(lines))
-	// for i, line := range lines {
-	// 	parts := strings.Fields(line)
-	// 	cleanedInput[i] = make([]int, len(parts))
-	// 	for j, part := range parts {
-	// 		cleanedInput[i][j], _ = strconv.Atoi(part)
-	// 	}
-	// }
-
-	// i) Single integer
-	// cleanedInput, _ := strconv.Atoi(strings.TrimSpace(string(input)))
-
-	// j) Single string
-	// cleanedInput := strings.TrimSpace(string(input))
-
-	Answer = 0 // Placeholder - replace with your solution logic
+	// Sum da last row
+	for _, num := range intGrid[len(intGrid)-1] { // length of the array minus one cuz len does not start at 0 bruh
+		Answer += num
+	}
+	fmt.Println(Answer)
+	fmt.Println(intGrid)
 }
