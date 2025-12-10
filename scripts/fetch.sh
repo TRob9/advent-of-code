@@ -52,6 +52,26 @@ if grep -q "404 Not Found" "$TEMP_HTML" 2>/dev/null; then
     exit 1
 fi
 
+# Create testcases.txt if it doesn't exist
+if [ ! -f "${DAY_DIR}/testcases.txt" ]; then
+    echo "Creating testcases.txt template..."
+    cat > "${DAY_DIR}/testcases.txt" << 'EOF'
+*** Part 1 ***
+input:
+
+
+expected:
+
+
+*** Part 2 ***
+input:
+
+
+expected:
+
+EOF
+fi
+
 # Fetch input
 echo "Downloading input..."
 if ! curl -s -H "Cookie: session=$SESSION" \
