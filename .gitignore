@@ -10,8 +10,11 @@ archive/
 # Server state
 server/state.json
 
-# Problem files (auto-fetched)
+# Problem files (auto-fetched - DO NOT COMMIT per AoC rules)
 problem.html
+*/*/problem.md
+*/*/input.txt
+*/*/testcases.txt
 
 # Benchmark test files (generated on-demand)
 benchmark_test.go
