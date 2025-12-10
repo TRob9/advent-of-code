@@ -3,12 +3,11 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"github.com/trob9/advent-of-code/pkg/harness"
+	"os"
 	"strconv"
 	"strings"
-
-	"github.com/trob9/advent-of-code/pkg/harness"
 )
 
 // AUTO-SUBMIT: When set to true, running the relevant make test command will auto submit answer if testcases pass (ie. make test-d1p1)
@@ -39,66 +38,70 @@ func main() {
 }
 
 func solve(input []byte) {
-	// Parse input - uncomment the pattern you need, delete the rest
 
-	// a) Array of strings (lines)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n")
+	lines := strings.Split(string(input), "\n")
 
-	// b) Array of strings (comma-separated)
-	// cleanedInput := strings.Split(strings.TrimSpace(string(input)), ",")
+	var runes1, runes2, runes3, runes4, runes5 []rune
+	for i, line := range lines { // could have been a switch case thing okay bro I get it
+		if i == 0 {
+			runes1 = []rune(line)
+		}
+		if i == 1 {
+			runes2 = []rune(line)
+		}
+		if i == 2 {
+			runes3 = []rune(line)
+		}
+		if i == 3 {
+			runes4 = []rune(line)
+		}
+		if i == 4 {
+			runes5 = []rune(line)
+		}
+	}
 
-	// c) Array of integers (lines)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([]int, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i], _ = strconv.Atoi(line)
-	// }
+	var outerNums [][]int
+	var innerNums []int
+	var operators []string
 
-	// d) Array of integers (comma-separated)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make([]int, len(parts))
-	// for i, part := range parts {
-	// 	cleanedInput[i], _ = strconv.Atoi(strings.TrimSpace(part))
-	// }
+	for i := len(runes1) - 1; i >= 0; i-- {
+		r1 := runes1[i]
+		r2 := runes2[i]
+		r3 := runes3[i]
+		r4 := runes4[i]
+		r5 := runes5[i]
 
-	// e) Map of string to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[string]int)
-	// for _, part := range parts {
-	// 	cleanedInput[strings.TrimSpace(part)] = 0
-	// }
+		numString := strings.TrimSpace(string(r1) + string(r2) + string(r3) + string(r4))
+		if numString == "" {
+			continue
+		}
 
-	// f) Map of int to int (comma-separated keys)
-	// parts := strings.Split(strings.TrimSpace(string(input)), ",")
-	// cleanedInput := make(map[int]int)
-	// for _, part := range parts {
-	// 	key, _ := strconv.Atoi(strings.TrimSpace(part))
-	// 	cleanedInput[key] = 0
-	// }
+		number, _ := strconv.Atoi(numString)
+		innerNums = append(innerNums, number)
 
-	// g) 2D grid of characters
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]rune, len(lines))
-	// for i, line := range lines {
-	// 	cleanedInput[i] = []rune(line)
-	// }
-
-	// h) 2D grid of integers (space-separated)
-	// lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	// cleanedInput := make([][]int, len(lines))
-	// for i, line := range lines {
-	// 	parts := strings.Fields(line)
-	// 	cleanedInput[i] = make([]int, len(parts))
-	// 	for j, part := range parts {
-	// 		cleanedInput[i][j], _ = strconv.Atoi(part)
-	// 	}
-	// }
-
-	// i) Single integer
-	// cleanedInput, _ := strconv.Atoi(strings.TrimSpace(string(input)))
-
-	// j) Single string
-	// cleanedInput := strings.TrimSpace(string(input))
-
-	Answer = 0 // Placeholder - replace with your solution logic
+		if r5 == '*' {
+			operators = append(operators, "*")
+			outerNums = append(outerNums, innerNums)
+			innerNums = nil
+		}
+		if r5 == '+' {
+			operators = append(operators, "+")
+			outerNums = append(outerNums, innerNums)
+			innerNums = nil
+		}
+	}
+	for i, operator := range operators {
+		if operator == "*" {
+			product := 1
+			for _, num := range outerNums[i] {
+				product *= num
+			}
+			Answer += product
+		}
+		if operator == "+" {
+			for _, num := range outerNums[i] {
+				Answer += num
+			}
+		}
+	}
 }

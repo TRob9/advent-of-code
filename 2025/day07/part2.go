@@ -40,7 +40,6 @@ func main() {
 func solve(input []byte) {
 
 	lines := strings.Split(strings.TrimSpace(string(input)), "\n")
-	lines[1] = lines[0]
 
 	cleanedInput := make([][]rune, len(lines))
 	for i, line := range lines {
@@ -51,6 +50,7 @@ func solve(input []byte) {
 	for i := range intGrid {
 		intGrid[i] = make([]int, len(lines))
 	}
+	fmt.Println(intGrid[1])
 
 	for r, row := range cleanedInput {
 		for c, char := range row {
@@ -59,7 +59,8 @@ func solve(input []byte) {
 			}
 		}
 	}
-
+	fmt.Println(cleanedInput[1])
+	fmt.Println(intGrid[1])
 	for r := range cleanedInput {
 		if r == 0 { /// skip that first row type shit
 			continue
@@ -67,20 +68,22 @@ func solve(input []byte) {
 		for c, char := range cleanedInput[r] {
 			if char == '^' {
 				if intGrid[r-1][c] >= 1 { // if the number above the split icon is more than zero
-					intGrid[r][c-1]++ // split to the side, adding one to each
-					intGrid[r][c+1]++
+					intGrid[r][c-1] += intGrid[r-1][c] // split to the side, adding one to each
+					intGrid[r][c+1] += intGrid[r-1][c]
 				}
 			}
-			if intGrid[r][c] == 0 && intGrid[r-1][c] >= 1 { // if above number is more than zero
-				intGrid[r][c] = intGrid[r-1][c] // the below number becomes the above number, propagating down
+			if intGrid[r-1][c] >= 1 && char != '^' { // if above number is more than zero and is not '^'
+				intGrid[r][c] += intGrid[r-1][c] // increment the current cell by the cell the row above
+
 			}
 		}
-	}
 
-	// Sum da last row
-	for _, num := range intGrid[len(intGrid)-1] { // length of the array minus one cuz len does not start at 0 bruh
-		Answer += num
+		// Sum da last row
+		for _, num := range intGrid[len(intGrid)-1] { // length of the array minus one cuz len does not start at 0 bruh
+			Answer += num
+		}
 	}
-	fmt.Println(Answer)
-	fmt.Println(intGrid)
+	for _, row := range intGrid {
+		fmt.Println(row)
+	}
 }

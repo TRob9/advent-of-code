@@ -5,8 +5,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 
 	"github.com/trob9/advent-of-code/pkg/harness"
 )
@@ -39,20 +37,6 @@ func main() {
 }
 
 func solve(input []byte) {
-	cleanedInput := strings.Split(strings.TrimSpace(string(input)), "\n")
-	x := make([]int, 0, len(cleanedInput))
-	y := make([]int, 0, len(cleanedInput))
-	z := make([]int, 0, len(cleanedInput))
-	for _, c := range cleanedInput {
-		coords := strings.Split(c, ",")
-		xVal, _ := strconv.Atoi(coords[0])
-		yVal, _ := strconv.Atoi(coords[1])
-		zVal, _ := strconv.Atoi(coords[2])
-
-		x = append(x, xVal)
-		y = append(y, yVal)
-		z = append(z, zVal)
-	}
 	// Parse input - uncomment the pattern you need, delete the rest
 
 	// a) Array of strings (lines)
